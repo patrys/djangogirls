@@ -190,6 +190,13 @@ class PostmortemAdmin(admin.ModelAdmin):
     list_display = ('event', 'attendees_count', 'applicants_count')
     raw_id_fields = ('event',)
 
+    def get_form(self, request, object=None, **kwargs):
+        if object is None and "event" in request.GET:
+            event = Event.objects.get(pk=request.GET['event'])
+            kwargs['initial'] = {'event': event}
+        return super(PostmortemAdmin, self).get_form(request, object, **kwargs)
+
+
 class UserAdmin(auth_admin.UserAdmin):
     fieldsets = (
         (None, {'fields': ('email', 'password')}),
